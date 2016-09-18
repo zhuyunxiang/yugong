@@ -26,6 +26,7 @@ import com.taobao.yugong.applier.AllRecordApplier;
 import com.taobao.yugong.applier.CheckRecordApplier;
 import com.taobao.yugong.applier.FullRecordApplier;
 import com.taobao.yugong.applier.IncrementRecordApplier;
+import com.taobao.yugong.applier.MultiRecordApplier;
 import com.taobao.yugong.applier.MultiThreadCheckRecordApplier;
 import com.taobao.yugong.applier.MultiThreadFullRecordApplier;
 import com.taobao.yugong.applier.MultiThreadIncrementRecordApplier;
@@ -70,24 +71,24 @@ import com.taobao.yugong.translator.DataTranslator;
  */
 public class YuGongController extends AbstractYuGongLifeCycle {
 
-    private DataSourceFactory        dataSourceFactory = new DataSourceFactory();
-    private JdkCompiler              compiler          = new JdkCompiler();
-    private Configuration            config;
+    private DataSourceFactory dataSourceFactory = new DataSourceFactory();
+    private JdkCompiler compiler = new JdkCompiler();
+    private Configuration config;
 
-    private RunMode                  runMode;
-    private YuGongContext            globalContext;
-    private DbType                   sourceDbType      = DbType.ORACLE;
-    private DbType                   targetDbType      = DbType.MYSQL;
-    private File                     translatorDir;
-    private AlarmService             alarmService;
+    private RunMode runMode;
+    private YuGongContext globalContext;
+    private DbType sourceDbType = DbType.ORACLE;
+    private DbType targetDbType = DbType.MYSQL;
+    private File translatorDir;
+    private AlarmService alarmService;
 
-    private TableController          tableController;
-    private ProgressTracer           progressTracer;
-    private List<YuGongInstance>     instances         = Lists.newArrayList();
+    private TableController tableController;
+    private ProgressTracer progressTracer;
+    private List<YuGongInstance> instances = Lists.newArrayList();
     private ScheduledExecutorService schedule;
     // 全局的工作线程池
-    private ThreadPoolExecutor       extractorExecutor = null;
-    private ThreadPoolExecutor       applierExecutor   = null;
+    private ThreadPoolExecutor extractorExecutor = null;
+    private ThreadPoolExecutor applierExecutor = null;
 
     public YuGongController(Configuration config){
         this.config = config;
@@ -355,11 +356,30 @@ public class YuGongController extends AbstractYuGongLifeCycle {
                 return new FullRecordApplier(context);
             }
         } else if (runMode == RunMode.INC) {
+            MultiRecordApplier appliers = new MultiRecordApplier();
             if (concurrent) {
-                return new MultiThreadIncrementRecordApplier(context, threadSize, splitSize, applierExecutor);
+                appliers.addRecordApplier(new MultiThreadIncrementRecordApplier(context,
+                    threadSize,
+                    splitSize,
+                    applierExecutor));
             } else {
-                return new IncrementRecordApplier(context);
+                appliers.addRecordApplier(new IncrementRecordApplier(context));
             }
+
+            DataSource target1 = initDataSource("target1");
+            YuGongContext newContext = context.cloneGlobalContext();
+            newContext.setTableMeta(context.getTableMeta());
+            newContext.setIgnoreSchema(context.isIgnoreSchema());
+            newContext.setTargetDs(target1);
+            if (concurrent) {
+                appliers.addRecordApplier(new MultiThreadIncrementRecordApplier(newContext,
+                    threadSize,
+                    splitSize,
+                    applierExecutor));
+            } else {
+                appliers.addRecordApplier(new IncrementRecordApplier(newContext));
+            }
+            return appliers;
         } else if (runMode == RunMode.ALL) {
             // 不会有并发问题，所以共用一份context
             RecordApplier fullApplier = chooseApplier(tableHolder, context, RunMode.FULL);
@@ -730,9 +750,9 @@ public class YuGongController extends AbstractYuGongLifeCycle {
             this.table = table;
         }
 
-        Table          table;
-        boolean        ignoreSchema = false;
-        DataTranslator translator   = null;
+        Table table;
+        boolean ignoreSchema = false;
+        DataTranslator translator = null;
 
         @Override
         public int hashCode() {
