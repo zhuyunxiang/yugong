@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.taobao.yugong.common.model.record.Record;
+import com.taobao.yugong.common.utils.YuGongUtils;
 import com.taobao.yugong.exception.YuGongException;
 
 /**
@@ -34,6 +35,10 @@ public class MultiRecordApplier extends AbstractRecordApplier {
 
     @Override
     public void apply(List<Record> records) throws YuGongException {
+        if (YuGongUtils.isEmpty(records)) {
+            return;
+        }
+
         for (RecordApplier applier : appliers) {
             applier.apply(records);
         }

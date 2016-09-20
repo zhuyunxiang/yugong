@@ -612,6 +612,10 @@ public class YuGongController extends AbstractYuGongLifeCycle {
             } catch (Exception e) {
                 throw new YuGongException(e);
             }
+
+            if (translator == null) {
+                return null;
+            }
             // 使用源表的表名查询一次拆分表名
             String schemaName = translator.translatorSchema();
             String tableName = translator.translatorTable();
