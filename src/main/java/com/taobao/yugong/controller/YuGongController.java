@@ -379,6 +379,20 @@ public class YuGongController extends AbstractYuGongLifeCycle {
             } else {
                 appliers.addRecordApplier(new IncrementRecordApplier(newContext));
             }
+
+            DataSource target2 = initDataSource("target2");
+            YuGongContext newContext2 = context.cloneGlobalContext();
+            newContext2.setTableMeta(context.getTableMeta());
+            newContext2.setIgnoreSchema(context.isIgnoreSchema());
+            newContext2.setTargetDs(target2);
+            if (concurrent) {
+                appliers.addRecordApplier(new MultiThreadIncrementRecordApplier(newContext2,
+                    threadSize,
+                    splitSize,
+                    applierExecutor));
+            } else {
+                appliers.addRecordApplier(new IncrementRecordApplier(newContext2));
+            }
             return appliers;
         } else if (runMode == RunMode.ALL) {
             // 不会有并发问题，所以共用一份context
