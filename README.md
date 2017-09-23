@@ -78,12 +78,3 @@ See the page for yugong performance :
 3.  新浪微博： agapple0002
 4.  报告issue：[issues](https://github.com/alibaba/yugong/issues)
 
-
-## Usage
-
-```
-mvn clean package
-cp target/yugong-shaded.jar .
-export JAVA_OPTIONS=-server -Xms2048m -Xmx3072m -Xmn1024m -XX:SurvivorRatio=2 -XX:PermSize=96m -XX:MaxPermSize=256m -Xss256k -XX:-UseAdaptiveSizePolicy -XX:MaxTenuringThreshold=15 -XX:+DisableExplicitGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseCMSCompactAtFullCollection -XX:+UseFastAccessorMethods -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError
-java $JAVA_OPTIONS -jar yugong-shaded.jar -c yugong-product-dev-check.properties -y yugong-product.yaml
-```
