@@ -60,6 +60,7 @@ public class OracleMaterializedIncRecordExtractor extends AbstractOracleRecordEx
     private YuGongContext                   context;
     private Table                           mlogMeta;
     private ColumnMeta                      rowidColumn            = new ColumnMeta("rowid", Types.ROWID);
+    private ColumnMeta                      rowidColumnString            = new ColumnMeta("rowid", Types.VARCHAR);
     private long                            sleepTime              = 1000L;
     private Map<List<String>, TableSqlUnit> masterSqlCache;
 
@@ -184,7 +185,17 @@ public class OracleMaterializedIncRecordExtractor extends AbstractOracleRecordEx
                             primaryKeys.add(col);
                         }
                     }
+                    
 
+                    if(primaryKeys.size()==0){
+                    	//如果是删除操作，直接将判断字段作为主键
+                        if(opType.toString().equals("D")){
+                        	
+                        }
+                    	ColumnValue col =new ColumnValue(rowidColumnString, rs.getObject("M_ROW$$"));
+                    	 primaryKeys.add(col);
+                    }
+                    
                     ColumnValue rowId = new ColumnValue(rowidColumn, rs.getObject("rowid"));
                     OracleIncrementRecord record = new OracleIncrementRecord(context.getTableMeta().getSchema(),
                         context.getTableMeta().getName(),
@@ -265,11 +276,28 @@ public class OracleMaterializedIncRecordExtractor extends AbstractOracleRecordEx
                         boolean exist = false;
                         if (rs.next()) {
                             exist = true;
-                            // 反查获取到完整行记录
-                            for (ColumnMeta col : context.getTableMeta().getColumns()) {
-                                ColumnValue cv = getColumnValue(rs, context.getSourceEncoding(), col);
-                                columns.add(cv);
+                            
+                            if("ROWID".equals(context.getmViewLogType())){
+                            	String[] pks=context.getTablepks().get(record.getTableName());
+                            	List<ColumnValue> primaryKeys=new ArrayList<ColumnValue>();
+                            	 // 反查获取到完整行记录  并重设主键
+                                for (ColumnMeta col : context.getTableMeta().getColumns()) {
+                                    ColumnValue cv = getColumnValue(rs, context.getSourceEncoding(), col);
+                                    if(Arrays.asList(pks).contains(col.getName())){
+                                    	primaryKeys.add(cv);
+                                     }else{
+                                    	 columns.add(cv);
+                                     }
+                                }
+                                record.setPrimaryKeys(primaryKeys);
+                            }else{
+                            	 // 反查获取到完整行记录
+                                for (ColumnMeta col : context.getTableMeta().getColumns()) {
+                                    ColumnValue cv = getColumnValue(rs, context.getSourceEncoding(), col);
+                                    columns.add(cv);
+                                }
                             }
+                           
                         }
 
                         if (!columns.isEmpty()) {
@@ -286,6 +314,7 @@ public class OracleMaterializedIncRecordExtractor extends AbstractOracleRecordEx
                         } else {
                             record.setDiscardType(DiscardType.NONE);
                         }
+                        
                         rs.close();
                     } catch (SQLException e) {
                         throw new SQLException("failed Record Data : " + record.toString(), e);

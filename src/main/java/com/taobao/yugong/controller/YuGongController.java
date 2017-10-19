@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executors;
@@ -458,9 +460,31 @@ public class YuGongController extends AbstractYuGongLifeCycle {
         context.setIgnoreSchema(config.getBoolean("yugong.table.ignoreSchema", false));
         context.setSkipApplierException(config.getBoolean("yugong.table.skipApplierException", false));
         context.setRunMode(runMode);
+        context.setmViewLogType(config.getString("yugong.table.inc.mviewlogtype","PK"));
+        context.setTablepks(getTablePKs(config.getString("yugong.table.inc.tablepks")));
         return context;
     }
-
+    
+    private Map<String,String[]> getTablePKs(String tablepks){
+    	if(StringUtils.isBlank(tablepks)){
+    		return null;
+    	}else{
+    	    Map<String,String[]> tps=new HashMap();
+    		String[] tables=tablepks.split("\\|");
+    		for(String table:tables){
+    			String[] tablev=table.split("&");
+    			String tableName=tablev[0];
+    			String[] pks=new String[tablev.length-1];
+    			for(int i=1;i<tablev.length;i++){
+    				pks[i-1]=new String(tablev[i]).toUpperCase().toString();
+    			}
+    			tps.put(new String(tableName).toUpperCase().toString(), pks);
+    		}
+    		return tps;
+    	}
+    }
+    
+    
     private DataSource initDataSource(String type) {
         String username = config.getString("yugong.database." + type + ".username");
         String password = config.getString("yugong.database." + type + ".password");
