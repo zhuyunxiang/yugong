@@ -189,7 +189,7 @@ public class FullRecordApplier extends AbstractRecordApplier {
         List<String> names = Arrays.asList(record.getSchemaName(), record.getTableName());
         TableSqlUnit sqlUnit = applierSqlCache.get(names);
         if (sqlUnit == null) {
-            synchronized (names) {
+            synchronized (this) {
                 sqlUnit = applierSqlCache.get(names);
                 if (sqlUnit == null) { // double-check
                     sqlUnit = new TableSqlUnit();

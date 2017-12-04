@@ -301,7 +301,7 @@ public class OracleMaterializedIncRecordExtractor extends AbstractOracleRecordEx
         List<String> names = Arrays.asList(record.getSchemaName(), record.getTableName());
         TableSqlUnit sqlUnit = masterSqlCache.get(names);
         if (sqlUnit == null) {
-            synchronized (names) {
+            synchronized (this) {
                 sqlUnit = masterSqlCache.get(names);
                 if (sqlUnit == null) { // double-check
                     sqlUnit = new TableSqlUnit();
