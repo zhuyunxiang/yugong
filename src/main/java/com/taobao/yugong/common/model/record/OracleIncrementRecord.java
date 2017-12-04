@@ -11,8 +11,8 @@ import com.taobao.yugong.common.db.meta.ColumnValue;
  */
 public class OracleIncrementRecord extends IncrementRecord {
 
-    private ColumnValue       rowId;
-    private DiscardType       discardType = DiscardType.NONE;
+    private ColumnValue rowId;
+    private DiscardType discardType = DiscardType.NONE;
 
     public OracleIncrementRecord(){
         super();

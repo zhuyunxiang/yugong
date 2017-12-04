@@ -1,9 +1,5 @@
 package com.taobao.yugong.common.utils;
 
-import com.taobao.yugong.common.db.meta.ColumnMeta;
-import com.taobao.yugong.common.model.DbType;
-import com.taobao.yugong.exception.YuGongException;
-
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -18,6 +14,10 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import com.taobao.yugong.common.db.meta.ColumnMeta;
+import com.taobao.yugong.common.model.DbType;
+import com.taobao.yugong.exception.YuGongException;
 
 public class YuGongUtils {
 

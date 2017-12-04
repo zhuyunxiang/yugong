@@ -16,46 +16,46 @@ import com.taobao.yugong.common.model.position.Position;
 public class YuGongContext {
 
     // 具体每张表的同步
-    private Position   lastPosition;                  // 最后一次同步的position记录
-    private Table      tableMeta;                     // 对应的meta
-    private boolean    ignoreSchema         = false;  // 同步时是否忽略schema，oracle迁移到mysql可能schema不同，可设置为忽略
+    private Position              lastPosition;                        // 最后一次同步的position记录
+    private Table                 tableMeta;                           // 对应的meta
+    private boolean               ignoreSchema         = false;        // 同步时是否忽略schema，oracle迁移到mysql可能schema不同，可设置为忽略
 
     // 全局共享
-    private RunMode    runMode;
-    private int        onceCrawNum;                   // 每次提取的记录数
-    private int        tpsLimit             = 0;      // <=0代表不限制
-    private DataSource sourceDs;                      // 源数据库链接
-    private DataSource targetDs;                      // 目标数据库链接
-    private boolean    batchApply           = false;
-    private boolean    skipApplierException = false;  // 是否允许跳过applier异常
-    private String     sourceEncoding       = "UTF-8";
-    private String     targetEncoding       = "UTF-8";
-    
-    
-    
-    private String mViewLogType="";// 创建物化视图日志的类型  PK主键 默认。 或ROWID
-    
-    private Map<String,String[]> tablepks=new HashMap(); //没有主键 实时同步时指定的判断字段
+    private RunMode               runMode;
+    private int                   onceCrawNum;                         // 每次提取的记录数
+    private int                   tpsLimit             = 0;            // <=0代表不限制
+    private DataSource            sourceDs;                            // 源数据库链接
+    private DataSource            targetDs;                            // 目标数据库链接
+    private boolean               batchApply           = false;
+    private boolean               skipApplierException = false;        // 是否允许跳过applier异常
+    private String                sourceEncoding       = "UTF-8";
+    private String                targetEncoding       = "UTF-8";
 
-    
-    
+    private String                mViewLogType         = "";            // 创建物化视图日志的类型
+                                                                        // PK主键
+                                                                        // 默认。
+                                                                        // 或ROWID
+
+    private Map<String, String[]> tablepks             = new HashMap(); // 没有主键
+                                                                        // 实时同步时指定的判断字段
+
     public Map<String, String[]> getTablepks() {
-		return tablepks;
-	}
+        return tablepks;
+    }
 
-	public void setTablepks(Map<String, String[]> tablepks) {
-		this.tablepks = tablepks;
-	}
+    public void setTablepks(Map<String, String[]> tablepks) {
+        this.tablepks = tablepks;
+    }
 
-	public String getmViewLogType() {
-		return mViewLogType;
-	}
+    public String getmViewLogType() {
+        return mViewLogType;
+    }
 
-	public void setmViewLogType(String mViewLogType) {
-		this.mViewLogType = mViewLogType;
-	}
+    public void setmViewLogType(String mViewLogType) {
+        this.mViewLogType = mViewLogType;
+    }
 
-	public Position getLastPosition() {
+    public Position getLastPosition() {
         return lastPosition;
     }
 

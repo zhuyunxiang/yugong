@@ -72,24 +72,24 @@ import com.taobao.yugong.translator.DataTranslator;
  */
 public class YuGongController extends AbstractYuGongLifeCycle {
 
-    private DataSourceFactory dataSourceFactory = new DataSourceFactory();
-    private JdkCompiler compiler = new JdkCompiler();
-    private Configuration config;
+    private DataSourceFactory        dataSourceFactory = new DataSourceFactory();
+    private JdkCompiler              compiler          = new JdkCompiler();
+    private Configuration            config;
 
-    private RunMode runMode;
-    private YuGongContext globalContext;
-    private DbType sourceDbType = DbType.ORACLE;
-    private DbType targetDbType = DbType.MYSQL;
-    private File translatorDir;
-    private AlarmService alarmService;
+    private RunMode                  runMode;
+    private YuGongContext            globalContext;
+    private DbType                   sourceDbType      = DbType.ORACLE;
+    private DbType                   targetDbType      = DbType.MYSQL;
+    private File                     translatorDir;
+    private AlarmService             alarmService;
 
-    private TableController tableController;
-    private ProgressTracer progressTracer;
-    private List<YuGongInstance> instances = Lists.newArrayList();
+    private TableController          tableController;
+    private ProgressTracer           progressTracer;
+    private List<YuGongInstance>     instances         = Lists.newArrayList();
     private ScheduledExecutorService schedule;
     // 全局的工作线程池
-    private ThreadPoolExecutor extractorExecutor = null;
-    private ThreadPoolExecutor applierExecutor = null;
+    private ThreadPoolExecutor       extractorExecutor = null;
+    private ThreadPoolExecutor       applierExecutor   = null;
 
     public YuGongController(Configuration config){
         this.config = config;
@@ -460,31 +460,30 @@ public class YuGongController extends AbstractYuGongLifeCycle {
         context.setIgnoreSchema(config.getBoolean("yugong.table.ignoreSchema", false));
         context.setSkipApplierException(config.getBoolean("yugong.table.skipApplierException", false));
         context.setRunMode(runMode);
-        context.setmViewLogType(config.getString("yugong.table.inc.mviewlogtype","PK"));
+        context.setmViewLogType(config.getString("yugong.table.inc.mviewlogtype", "PK"));
         context.setTablepks(getTablePKs(config.getString("yugong.table.inc.tablepks")));
         return context;
     }
-    
-    private Map<String,String[]> getTablePKs(String tablepks){
-    	if(StringUtils.isBlank(tablepks)){
-    		return null;
-    	}else{
-    	    Map<String,String[]> tps=new HashMap();
-    		String[] tables=tablepks.split("\\|");
-    		for(String table:tables){
-    			String[] tablev=table.split("&");
-    			String tableName=tablev[0];
-    			String[] pks=new String[tablev.length-1];
-    			for(int i=1;i<tablev.length;i++){
-    				pks[i-1]=new String(tablev[i]).toUpperCase().toString();
-    			}
-    			tps.put(new String(tableName).toUpperCase().toString(), pks);
-    		}
-    		return tps;
-    	}
+
+    private Map<String, String[]> getTablePKs(String tablepks) {
+        if (StringUtils.isBlank(tablepks)) {
+            return null;
+        } else {
+            Map<String, String[]> tps = new HashMap();
+            String[] tables = tablepks.split("\\|");
+            for (String table : tables) {
+                String[] tablev = table.split("&");
+                String tableName = tablev[0];
+                String[] pks = new String[tablev.length - 1];
+                for (int i = 1; i < tablev.length; i++) {
+                    pks[i - 1] = new String(tablev[i]).toUpperCase().toString();
+                }
+                tps.put(new String(tableName).toUpperCase().toString(), pks);
+            }
+            return tps;
+        }
     }
-    
-    
+
     private DataSource initDataSource(String type) {
         String username = config.getString("yugong.database." + type + ".username");
         String password = config.getString("yugong.database." + type + ".password");
@@ -762,9 +761,9 @@ public class YuGongController extends AbstractYuGongLifeCycle {
             this.table = table;
         }
 
-        Table table;
-        boolean ignoreSchema = false;
-        DataTranslator translator = null;
+        Table          table;
+        boolean        ignoreSchema = false;
+        DataTranslator translator   = null;
 
         @Override
         public int hashCode() {
