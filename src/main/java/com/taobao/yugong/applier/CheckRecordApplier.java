@@ -348,18 +348,18 @@ public class CheckRecordApplier extends AbstractRecordApplier {
         }
     }
 
-    protected TableSqlUnit getSqlUnit(Record record) {
-        List<String> names = Arrays.asList(record.getSchemaName(), record.getTableName());
-        TableSqlUnit sqlUnit = selectSqlCache.get(names);
-        if (sqlUnit == null) {
-            synchronized (this) {
-                sqlUnit = selectSqlCache.get(names);
-                if (sqlUnit == null) { // double-check
-                    sqlUnit = new TableSqlUnit();
-                    String applierSql = null;
-                    Table meta = TableMetaGenerator.getTableMeta(context.getTargetDs(),
-                        context.isIgnoreSchema() ? null : names.get(0),
-                        names.get(1));
+  protected TableSqlUnit getSqlUnit(Record record) {
+    List<String> names = Arrays.asList(record.getSchemaName(), record.getTableName());
+    TableSqlUnit sqlUnit = selectSqlCache.get(names);
+    if (sqlUnit == null) {
+      synchronized (names) {
+        sqlUnit = selectSqlCache.get(names);
+        if (sqlUnit == null) { // double-check
+          sqlUnit = new TableSqlUnit();
+          String applierSql = null;
+          Table meta = TableMetaGenerator.getTableMeta(context.getTargetDs(),
+              context.isIgnoreSchema() ? null : names.get(0),
+              names.get(1));
 
                     String[] primaryKeys = getPrimaryNames(record);
                     String[] columns = getColumnNames(record);
