@@ -8,15 +8,15 @@ package com.taobao.yugong.common.alarm;
  */
 public interface AlarmService {
 
-  /**
-   * 发送基于kv的报警信息
-   *
-   * <pre>
-   * Map内容；
-   * 1. message : 报警内容
-   * 2. receiveKey : 报警接收者信息
-   * </pre>
-   */
-  public void sendAlarm(AlarmMessage data);
+    /**
+     * 发送基于kv的报警信息
+     *
+     * <pre>
+     * Map内容；
+     * 1. message : 报警内容
+     * 2. receiveKey : 报警接收者信息
+     * </pre>
+     */
+    public void sendAlarm(AlarmMessage data);
 
 }

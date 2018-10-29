@@ -19,13 +19,13 @@ import java.util.concurrent.ThreadPoolExecutor;
  *    for ( ....) {
  *       template.submit(new Runnable() {})
  *    }
- *
+ * 
  *    List<?> result = template.waitForResult();
  *    // do result
  * } finally {
  *    template.clear();
  * }
- *
+ * 
  * 注意：该模板工程，不支持多业务并发调用，会出现数据混乱
  * </pre>
  *
@@ -33,76 +33,76 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public class ExecutorTemplate {
 
-  private volatile ExecutorCompletionService comletions = null;
-  private volatile List<Future> futures = null;
+    private volatile ExecutorCompletionService comletions = null;
+    private volatile List<Future>              futures    = null;
 
-  public ExecutorTemplate(ThreadPoolExecutor executor) {
-    futures = Collections.synchronizedList(new ArrayList<Future>());
-    comletions = new ExecutorCompletionService(executor);
-  }
-
-  public void submit(Runnable task) {
-    Future future = comletions.submit(task, null);
-    futures.add(future);
-    check(future);
-  }
-
-  public void submit(Callable<Exception> task) {
-    Future future = comletions.submit(task);
-    futures.add(future);
-    check(future);
-  }
-
-  private void check(Future future) {
-    if (future.isDone()) {
-      // 立即判断一次，因为使用了CallerRun可能当场跑出结果，针对有异常时快速响应，而不是等跑完所有的才抛异常
-      try {
-        future.get();
-      } catch (Throwable e) {
-        // 取消完之后立马退出
-        cacelAllFutures();
-        throw new RuntimeException(e);
-      }
-    }
-  }
-
-  public synchronized List<?> waitForResult() {
-    List result = new ArrayList();
-    RuntimeException exception = null;
-    // 开始处理结果
-    int index = 0;
-    while (index < futures.size()) { // 循环处理发出去的所有任务
-      try {
-        Future future = comletions.take();// 它也可能被打断
-        result.add(future.get());
-      } catch (Throwable e) {
-        exception = new RuntimeException(e);
-        // 如何一个future出现了异常，就退出
-        break;
-      }
-
-      index++;
+    public ExecutorTemplate(ThreadPoolExecutor executor){
+        futures = Collections.synchronizedList(new ArrayList<Future>());
+        comletions = new ExecutorCompletionService(executor);
     }
 
-    if (exception != null) {
-      // 小于代表有错误，需要对未完成的记录进行cancel操作，对已完成的结果进行收集，做重复录入过滤记录
-      cacelAllFutures();
-      throw exception;
-    } else {
-      return result;
+    public void submit(Runnable task) {
+        Future future = comletions.submit(task, null);
+        futures.add(future);
+        check(future);
     }
-  }
 
-  public void cacelAllFutures() {
-    for (Future future : futures) {
-      if (!future.isDone() && !future.isCancelled()) {
-        future.cancel(true);
-      }
+    public void submit(Callable<Exception> task) {
+        Future future = comletions.submit(task);
+        futures.add(future);
+        check(future);
     }
-  }
 
-  public void clear() {
-    futures.clear();
-  }
+    private void check(Future future) {
+        if (future.isDone()) {
+            // 立即判断一次，因为使用了CallerRun可能当场跑出结果，针对有异常时快速响应，而不是等跑完所有的才抛异常
+            try {
+                future.get();
+            } catch (Throwable e) {
+                // 取消完之后立马退出
+                cacelAllFutures();
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public synchronized List<?> waitForResult() {
+        List result = new ArrayList();
+        RuntimeException exception = null;
+        // 开始处理结果
+        int index = 0;
+        while (index < futures.size()) { // 循环处理发出去的所有任务
+            try {
+                Future future = comletions.take();// 它也可能被打断
+                result.add(future.get());
+            } catch (Throwable e) {
+                exception = new RuntimeException(e);
+                // 如何一个future出现了异常，就退出
+                break;
+            }
+
+            index++;
+        }
+
+        if (exception != null) {
+            // 小于代表有错误，需要对未完成的记录进行cancel操作，对已完成的结果进行收集，做重复录入过滤记录
+            cacelAllFutures();
+            throw exception;
+        } else {
+            return result;
+        }
+    }
+
+    public void cacelAllFutures() {
+        for (Future future : futures) {
+            if (!future.isDone() && !future.isCancelled()) {
+                future.cancel(true);
+            }
+        }
+    }
+
+    public void clear() {
+        futures.clear();
+    }
 
 }

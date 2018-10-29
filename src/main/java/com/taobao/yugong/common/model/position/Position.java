@@ -1,10 +1,10 @@
 package com.taobao.yugong.common.model.position;
 
-import com.taobao.yugong.common.utils.YuGongToStringStyle;
+import java.io.Serializable;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import java.io.Serializable;
+import com.taobao.yugong.common.utils.YuGongToStringStyle;
 
 /**
  * 事件唯一标示
@@ -14,14 +14,14 @@ import java.io.Serializable;
  */
 public abstract class Position implements Serializable {
 
-  private static final long serialVersionUID = 2332798099928474975L;
+    private static final long serialVersionUID = 2332798099928474975L;
 
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this, YuGongToStringStyle.DEFAULT_STYLE);
-  }
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, YuGongToStringStyle.DEFAULT_STYLE);
+    }
 
-  public Position clone() {
-    return null;
-  }
+    public Position clone() {
+        return null;
+    }
 
 }

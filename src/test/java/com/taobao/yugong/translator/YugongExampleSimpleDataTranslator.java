@@ -10,27 +10,27 @@ import com.taobao.yugong.translator.TableTranslators.ColumnTranslator;
  */
 public class YugongExampleSimpleDataTranslator extends AbstractDataTranslator implements DataTranslator {
 
-  public YugongExampleSimpleDataTranslator() {
-    ColumnTranslator translator = TableTranslators.newColumnTranslator();
-    // 包含指定的字段的配置
-    translator.include("id", "name", "amount", "score", "gmt_create", "gmt_modified");
+    public YugongExampleSimpleDataTranslator(){
+        ColumnTranslator translator = TableTranslators.newColumnTranslator();
+        // 包含指定的字段的配置
+        translator.include("id", "name", "amount", "score", "gmt_create", "gmt_modified");
 
-    // 去掉指定的字段的配置
-    translator.exclude("alias_name");
+        // 去掉指定的字段的配置
+        translator.exclude("alias_name");
 
-    // 字段重命名的配置
-    translator.alias("amount", "amount_alias");
-    // 保存
-    super.setTranslator(translator);
-  }
+        // 字段重命名的配置
+        translator.alias("amount", "amount_alias");
+        // 保存
+        super.setTranslator(translator);
+    }
 
-  @Override
-  public String translatorSchema() {
-    return null;
-  }
+    @Override
+    public String translatorSchema() {
+        return null;
+    }
 
-  @Override
-  public String translatorTable() {
-    return "yugong_example_drds";
-  }
+    @Override
+    public String translatorTable() {
+        return "yugong_example_drds";
+    }
 }

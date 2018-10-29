@@ -1,10 +1,10 @@
 package com.taobao.yugong.applier;
 
+import java.util.List;
+
 import com.taobao.yugong.common.lifecycle.YuGongLifeCycle;
 import com.taobao.yugong.common.model.record.Record;
 import com.taobao.yugong.exception.YuGongException;
-
-import java.util.List;
 
 /**
  * 数据提交
@@ -14,6 +14,6 @@ import java.util.List;
  */
 public interface RecordApplier extends YuGongLifeCycle {
 
-  public void apply(List<Record> records) throws YuGongException;
+    public void apply(List<Record> records) throws YuGongException;
 
 }

@@ -11,36 +11,36 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractYuGongLifeCycle implements YuGongLifeCycle {
 
-  protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-  protected volatile boolean running = false;                                   // 是否处于运行中
+    protected final Logger     logger  = LoggerFactory.getLogger(this.getClass());
+    protected volatile boolean running = false;                                   // 是否处于运行中
 
-  public boolean isStart() {
-    return running;
-  }
-
-  public void start() {
-    if (running) {
-      return;
+    public boolean isStart() {
+        return running;
     }
 
-    running = true;
-  }
+    public void start() {
+        if (running) {
+            return;
+        }
 
-  public void stop() {
-    if (!running) {
-      return;
+        running = true;
     }
 
-    running = false;
-  }
+    public void stop() {
+        if (!running) {
+            return;
+        }
 
-  public void abort(String why, Throwable e) {
-    logger.error("abort caused by " + why, e);
-    stop();
-  }
+        running = false;
+    }
 
-  public boolean isStop() {
-    return !isStart();
-  }
+    public void abort(String why, Throwable e) {
+        logger.error("abort caused by " + why, e);
+        stop();
+    }
+
+    public boolean isStop() {
+        return !isStart();
+    }
 
 }

@@ -8,8 +8,6 @@ import javax.sql.DataSource;
 import com.taobao.yugong.common.db.meta.Table;
 import com.taobao.yugong.common.model.position.Position;
 
-import javax.sql.DataSource;
-
 /**
  * yugong数据处理上下文
  *
@@ -17,154 +15,155 @@ import javax.sql.DataSource;
  */
 public class YuGongContext {
 
-  // 具体每张表的同步
-  private Position lastPosition;                  // 最后一次同步的position记录
-  private Table tableMeta;                     // 对应的meta
-  private boolean ignoreSchema = false;  // 同步时是否忽略schema，oracle迁移到mysql可能schema不同，可设置为忽略
+    // 具体每张表的同步
+    private Position              lastPosition;                        // 最后一次同步的position记录
+    private Table                 tableMeta;                           // 对应的meta
+    private boolean               ignoreSchema         = false;        // 同步时是否忽略schema，oracle迁移到mysql可能schema不同，可设置为忽略
 
-  // 全局共享
-  private RunMode runMode;
-  private int onceCrawNum;                   // 每次提取的记录数
-  private int tpsLimit = 0;      // <=0代表不限制
-  private DataSource sourceDs;                      // 源数据库链接
-  private DataSource targetDs;                      // 目标数据库链接
-  private boolean batchApply = false;
-  private boolean skipApplierException = false;  // 是否允许跳过applier异常
-  private String sourceEncoding = "UTF-8";
-  private String targetEncoding = "UTF-8";
+    // 全局共享
+    private RunMode               runMode;
+    private int                   onceCrawNum;                         // 每次提取的记录数
+    private int                   tpsLimit             = 0;            // <=0代表不限制
+    private DataSource            sourceDs;                            // 源数据库链接
+    private DataSource            targetDs;                            // 目标数据库链接
+    private boolean               batchApply           = false;
+    private boolean               skipApplierException = false;        // 是否允许跳过applier异常
+    private String                sourceEncoding       = "UTF-8";
+    private String                targetEncoding       = "UTF-8";
 
-  private String mViewLogType = "";            // 创建物化视图日志的类型
+    private String                mViewLogType         = "";           // 创建物化视图日志的类型
 
-  private Map<String, String[]> tablepks             = new HashMap(); // 没有主键
-  // 实时同步时指定的判断字段
+    private Map<String, String[]> tablepks             = new HashMap(); // 没有主键
 
-  public Map<String, String[]> getTablepks() {
-    return tablepks;
-  }
+    // 实时同步时指定的判断字段
 
-  public void setTablepks(Map<String, String[]> tablepks) {
-    this.tablepks = tablepks;
-  }
+    public Map<String, String[]> getTablepks() {
+        return tablepks;
+    }
 
-  public String getmViewLogType() {
-    return mViewLogType;
-  }
+    public void setTablepks(Map<String, String[]> tablepks) {
+        this.tablepks = tablepks;
+    }
 
-  public void setmViewLogType(String mViewLogType) {
-    this.mViewLogType = mViewLogType;
-  }
+    public String getmViewLogType() {
+        return mViewLogType;
+    }
 
-  public Position getLastPosition() {
-    return lastPosition;
-  }
+    public void setmViewLogType(String mViewLogType) {
+        this.mViewLogType = mViewLogType;
+    }
 
-  public void setLastPosition(Position lastPosition) {
-    this.lastPosition = lastPosition;
-  }
+    public Position getLastPosition() {
+        return lastPosition;
+    }
 
-  public int getOnceCrawNum() {
-    return onceCrawNum;
-  }
+    public void setLastPosition(Position lastPosition) {
+        this.lastPosition = lastPosition;
+    }
 
-  public void setOnceCrawNum(int onceCrawNum) {
-    this.onceCrawNum = onceCrawNum;
-  }
+    public int getOnceCrawNum() {
+        return onceCrawNum;
+    }
 
-  public DataSource getSourceDs() {
-    return sourceDs;
-  }
+    public void setOnceCrawNum(int onceCrawNum) {
+        this.onceCrawNum = onceCrawNum;
+    }
 
-  public void setSourceDs(DataSource sourceDs) {
-    this.sourceDs = sourceDs;
-  }
+    public DataSource getSourceDs() {
+        return sourceDs;
+    }
 
-  public DataSource getTargetDs() {
-    return targetDs;
-  }
+    public void setSourceDs(DataSource sourceDs) {
+        this.sourceDs = sourceDs;
+    }
 
-  public void setTargetDs(DataSource targetDs) {
-    this.targetDs = targetDs;
-  }
+    public DataSource getTargetDs() {
+        return targetDs;
+    }
 
-  public boolean isBatchApply() {
-    return batchApply;
-  }
+    public void setTargetDs(DataSource targetDs) {
+        this.targetDs = targetDs;
+    }
 
-  public void setBatchApply(boolean batchApply) {
-    this.batchApply = batchApply;
-  }
+    public boolean isBatchApply() {
+        return batchApply;
+    }
 
-  public String getSourceEncoding() {
-    return sourceEncoding;
-  }
+    public void setBatchApply(boolean batchApply) {
+        this.batchApply = batchApply;
+    }
 
-  public void setSourceEncoding(String sourceEncoding) {
-    this.sourceEncoding = sourceEncoding;
-  }
+    public String getSourceEncoding() {
+        return sourceEncoding;
+    }
 
-  public String getTargetEncoding() {
-    return targetEncoding;
-  }
+    public void setSourceEncoding(String sourceEncoding) {
+        this.sourceEncoding = sourceEncoding;
+    }
 
-  public void setTargetEncoding(String targetEncoding) {
-    this.targetEncoding = targetEncoding;
-  }
+    public String getTargetEncoding() {
+        return targetEncoding;
+    }
 
-  public Table getTableMeta() {
-    return tableMeta;
-  }
+    public void setTargetEncoding(String targetEncoding) {
+        this.targetEncoding = targetEncoding;
+    }
 
-  public void setTableMeta(Table tableMeta) {
-    this.tableMeta = tableMeta;
-  }
+    public Table getTableMeta() {
+        return tableMeta;
+    }
 
-  public int getTpsLimit() {
-    return tpsLimit;
-  }
+    public void setTableMeta(Table tableMeta) {
+        this.tableMeta = tableMeta;
+    }
 
-  public void setTpsLimit(int tpsLimit) {
-    this.tpsLimit = tpsLimit;
-  }
+    public int getTpsLimit() {
+        return tpsLimit;
+    }
 
-  public RunMode getRunMode() {
-    return runMode;
-  }
+    public void setTpsLimit(int tpsLimit) {
+        this.tpsLimit = tpsLimit;
+    }
 
-  public void setRunMode(RunMode runMode) {
-    this.runMode = runMode;
-  }
+    public RunMode getRunMode() {
+        return runMode;
+    }
 
-  public boolean isIgnoreSchema() {
-    return ignoreSchema;
-  }
+    public void setRunMode(RunMode runMode) {
+        this.runMode = runMode;
+    }
 
-  public void setIgnoreSchema(boolean ignoreSchema) {
-    this.ignoreSchema = ignoreSchema;
-  }
+    public boolean isIgnoreSchema() {
+        return ignoreSchema;
+    }
 
-  public boolean isSkipApplierException() {
-    return skipApplierException;
-  }
+    public void setIgnoreSchema(boolean ignoreSchema) {
+        this.ignoreSchema = ignoreSchema;
+    }
 
-  public void setSkipApplierException(boolean skipApplierException) {
-    this.skipApplierException = skipApplierException;
-  }
+    public boolean isSkipApplierException() {
+        return skipApplierException;
+    }
 
-  public YuGongContext cloneGlobalContext() {
-    YuGongContext context = new YuGongContext();
-    context.setRunMode(runMode);
-    context.setBatchApply(batchApply);
-    context.setSourceDs(sourceDs);
-    context.setTargetDs(targetDs);
-    context.setSourceEncoding(sourceEncoding);
-    context.setTargetEncoding(targetEncoding);
-    context.setOnceCrawNum(onceCrawNum);
-    context.setTpsLimit(tpsLimit);
-    context.setIgnoreSchema(ignoreSchema);
-    context.setSkipApplierException(skipApplierException);
-    context.setmViewLogType(mViewLogType);
-    context.setTablepks(tablepks);
-    return context;
-  }
+    public void setSkipApplierException(boolean skipApplierException) {
+        this.skipApplierException = skipApplierException;
+    }
+
+    public YuGongContext cloneGlobalContext() {
+        YuGongContext context = new YuGongContext();
+        context.setRunMode(runMode);
+        context.setBatchApply(batchApply);
+        context.setSourceDs(sourceDs);
+        context.setTargetDs(targetDs);
+        context.setSourceEncoding(sourceEncoding);
+        context.setTargetEncoding(targetEncoding);
+        context.setOnceCrawNum(onceCrawNum);
+        context.setTpsLimit(tpsLimit);
+        context.setIgnoreSchema(ignoreSchema);
+        context.setSkipApplierException(skipApplierException);
+        context.setmViewLogType(mViewLogType);
+        context.setTablepks(tablepks);
+        return context;
+    }
 
 }

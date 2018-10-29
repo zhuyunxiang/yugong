@@ -11,8 +11,8 @@ import com.taobao.yugong.exception.YuGongException;
  */
 public interface RecordPositioner extends YuGongLifeCycle {
 
-  Position getLatest();
+    Position getLatest();
 
-  void persist(Position position) throws YuGongException;
+    void persist(Position position) throws YuGongException;
 
 }

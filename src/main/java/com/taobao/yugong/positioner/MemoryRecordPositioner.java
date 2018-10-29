@@ -11,14 +11,14 @@ import com.taobao.yugong.exception.YuGongException;
  */
 public class MemoryRecordPositioner extends AbstractYuGongLifeCycle implements RecordPositioner {
 
-  protected volatile Position position;
+    protected volatile Position position;
 
-  public Position getLatest() {
-    return position;
-  }
+    public Position getLatest() {
+        return position;
+    }
 
-  public void persist(Position position) throws YuGongException {
-    this.position = position;
-  }
+    public void persist(Position position) throws YuGongException {
+        this.position = position;
+    }
 
 }

@@ -1,11 +1,11 @@
 package com.taobao.yugong.common.model.record;
 
-import com.taobao.yugong.common.db.meta.ColumnValue;
-import com.taobao.yugong.common.utils.YuGongToStringStyle;
+import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import java.util.List;
+import com.taobao.yugong.common.db.meta.ColumnValue;
+import com.taobao.yugong.common.utils.YuGongToStringStyle;
 
 /**
  * 增量的record对象
@@ -14,67 +14,67 @@ import java.util.List;
  */
 public class IncrementRecord extends Record {
 
-  private IncrementOpType opType;
+    private IncrementOpType opType;
 
-  public IncrementRecord() {
-    super();
-  }
-
-  public IncrementRecord(String schemaName, String tableName, List<ColumnValue> primaryKeys, List<ColumnValue> columns) {
-    super(schemaName, tableName, primaryKeys, columns);
-  }
-
-  public IncrementOpType getOpType() {
-    return opType;
-  }
-
-  public void setOpType(IncrementOpType opType) {
-    this.opType = opType;
-  }
-
-  @Override
-  @Deprecated
-  public ColumnValue getPrimaryKeyByName(String pkName) {
-    if (opType == IncrementOpType.D) {
-      return super.getPrimaryKeyByName(pkName, true); // delete的时候可能缺少列,返回null值
-    } else {
-      return super.getPrimaryKeyByName(pkName);
+    public IncrementRecord(){
+        super();
     }
-  }
 
-  @Override
-  public ColumnValue getColumnByName(String columnName) {
-    if (opType == IncrementOpType.D) {
-      return super.getColumnByName(columnName, true); // delete的时候可能缺少列,返回null值
-    } else {
-      return super.getColumnByName(columnName);
+    public IncrementRecord(String schemaName, String tableName, List<ColumnValue> primaryKeys, List<ColumnValue> columns){
+        super(schemaName, tableName, primaryKeys, columns);
     }
-  }
 
-  @Override
-  public ColumnValue removeColumnByName(String columnName) {
-    if (opType == IncrementOpType.D) {
-      return super.removeColumnByName(columnName, true); // delete的时候可能缺少列,返回null值
-    } else {
-      return super.removeColumnByName(columnName);
+    public IncrementOpType getOpType() {
+        return opType;
     }
-  }
 
-  @Override
-  public IncrementRecord clone() {
-    IncrementRecord record = new IncrementRecord();
-    super.clone(record);
-    record.setOpType(this.opType);
-    return record;
-  }
+    public void setOpType(IncrementOpType opType) {
+        this.opType = opType;
+    }
 
-  public void clone(IncrementRecord record) {
-    super.clone(record);
-    record.setOpType(this.opType);
-  }
+    @Override
+    @Deprecated
+    public ColumnValue getPrimaryKeyByName(String pkName) {
+        if (opType == IncrementOpType.D) {
+            return super.getPrimaryKeyByName(pkName, true); // delete的时候可能缺少列,返回null值
+        } else {
+            return super.getPrimaryKeyByName(pkName);
+        }
+    }
 
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this, YuGongToStringStyle.DEFAULT_STYLE);
-  }
+    @Override
+    public ColumnValue getColumnByName(String columnName) {
+        if (opType == IncrementOpType.D) {
+            return super.getColumnByName(columnName, true); // delete的时候可能缺少列,返回null值
+        } else {
+            return super.getColumnByName(columnName);
+        }
+    }
+
+    @Override
+    public ColumnValue removeColumnByName(String columnName) {
+        if (opType == IncrementOpType.D) {
+            return super.removeColumnByName(columnName, true); // delete的时候可能缺少列,返回null值
+        } else {
+            return super.removeColumnByName(columnName);
+        }
+    }
+
+    @Override
+    public IncrementRecord clone() {
+        IncrementRecord record = new IncrementRecord();
+        super.clone(record);
+        record.setOpType(this.opType);
+        return record;
+    }
+
+    public void clone(IncrementRecord record) {
+        super.clone(record);
+        record.setOpType(this.opType);
+    }
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, YuGongToStringStyle.DEFAULT_STYLE);
+    }
 
 }
